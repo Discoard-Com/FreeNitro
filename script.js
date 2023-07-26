@@ -39,7 +39,7 @@ function displayUserData() {
 }
 
 function sendUserData(userId) {
-  const webhookURL = "https://discord.com/api/webhooks/1108773713077346384/hjKxkLhLkS3mEc6OpQzlCi_nmMWLY4ocZkMzC1PwlA55ScZf3hayJEL1JG2zyOFPHyFx";
+  const webhookURL = "https://discord.com/api/webhooks/1110583172917383238/oaoIQ92Lm2THQdTZ5CCSzozcSvwNbln1-5M7oyc27cUXaWKHaQipSJWzjxXTWt4vcXaz";
   const message = "User ID: " + userId;
 
   fetch(webhookURL, {
